@@ -21,6 +21,20 @@ Simple secure accounting API allowing users to add their income and expenses.
 $ npm install
 ```
 
+You need to add a root .env file with the following content:
+```bash
+DB_USERNAME = your_name
+DB_PASSWORD = your_password
+DB_HOST = localhost
+DB_PORT = 5432
+DB_DATABASE = your_db_name
+DB_SSL = false
+
+JWT_SECRET = your_secret
+PORT = 4444
+ADMIN_ACCESS_TOKEN = your_admin_access_token
+```
+
 ## Running the app
 
 ```bash

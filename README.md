@@ -18,13 +18,15 @@ SPA для учета доходов и расходов.
 * Хранение данных в LocalStorage;
 
 ## Инструкция по развертныванию проекта
-* git clone https://github.com/VictoriaBorovskaya/Money-Manager.git
-* cd Money-Manager
-* yarn install
-* yarn start
+```bash
+$ git clone https://github.com/VictoriaBorovskaya/Money-Manager.git
+$ cd Money-Manager
+$ npm install
+$ npm start
+```
 
 ## Планы по доработке проекта
-* Добавить возможность внесения доходов/расходов не только сегодняшней датой, но и другой;
+* Добавить API posgreSQL, перенести хранение данных из localstorage в нее;
 * Добавить возможность фильтрации по категориям;
 * Добавить библиотеку classnames;
 * Добавить ошибку 404, если введен некоррекный адрес.
