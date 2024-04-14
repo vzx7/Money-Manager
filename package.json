@@ -4,7 +4,8 @@
     "scripts": {
         "start:api": "cd API && npm start",
         "start:front": "cd FRONT && npm start",
-        "all": "concurrently \"npm:start:*\""
+        "all": "concurrently \"npm:start:*\"",
+        "init": "npm i && cd API && npm i && cd ../FRONT && npm i"
     },
     "devDependencies": {
         "concurrently": "^8.2.2"
