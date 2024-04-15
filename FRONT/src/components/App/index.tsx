@@ -6,7 +6,6 @@ import Footer from "components/Footer"
 import Income from "components/Income"
 import HomePage from "components/HomePage"
 import ErrorPage from "components/ErrorPage"
-import Auth from "components/Auth"
 
 function App() {
     return (
@@ -17,7 +16,6 @@ function App() {
                     <Route path="/" element={<HomePage />}></Route>
                     <Route path="/income" element={<Income />}></Route>
                     <Route path="/expenses" element={<Expenses />}></Route>
-                    <Route path="/auth" element={<Auth />}></Route>
                     <Route path="*" element={<ErrorPage />}></Route>
                 </Routes>
             </div>
