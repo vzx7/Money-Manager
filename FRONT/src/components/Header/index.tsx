@@ -5,12 +5,12 @@ const Header = () => {
     const icon = require(".//headerLogo.png")
 
     return (
-        <header className="bg-sky-300 static max-w-2xl m-auto py-2 shadow-md">
+        <header className="bg-sky-300 static max-w-4xl m-auto py-2 shadow-md">
             <div className="flex items-center justify-between px-3">
                 <div className="flex items-center relative gap-1">
                     <img src={icon} alt="logo" className="h-9 w-9" />
                     <p className="text-3xl font-semibold pl-1 border-l-4 border-l-neutral-800">
-                        Тяжеловато
+                        Анализ финансов
                     </p>
                 </div>
                 <div className="flex">
@@ -37,6 +37,12 @@ const Header = () => {
                 </Link>
                 <Link to="/expenses" className="header-link link">
                     Расходы
+                </Link>
+                <Link to="/login" className="header-link link">
+                    Войти
+                </Link>
+                <Link to="/login" className="header-link link">
+                    Зарегистрироваться
                 </Link>
             </div>
         </header>
