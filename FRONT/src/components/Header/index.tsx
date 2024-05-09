@@ -38,11 +38,8 @@ const Header = () => {
                 <Link to="/expenses" className="header-link link">
                     Расходы
                 </Link>
-                <Link to="/login" className="header-link link">
-                    Войти
-                </Link>
-                <Link to="/register" className="header-link link">
-                    Зарегистрироваться
+                <Link to="/auth" className="header-link link">
+                    Авторизация
                 </Link>
             </div>
         </header>
