@@ -7,8 +7,39 @@ import Income from "components/Income"
 import HomePage from "components/HomePage"
 import ErrorPage from "components/ErrorPage"
 import Auth from "components/Auth"
+import { useEffect, useState } from "react"
+import AuthService from "services/auth.service"
+import EventBus from "common/EventBus"
 
 function App() {
+    const [showModeratorBoard, setShowModeratorBoard] = useState(false);
+    const [showAdminBoard, setShowAdminBoard] = useState(false);
+    const [currentUser, setCurrentUser] = useState(undefined);
+  
+    useEffect(() => {
+      const user = AuthService.getCurrentUser();
+  
+      if (user) {
+        setCurrentUser(user);
+        setShowModeratorBoard(user.roles.includes("ROLE_MODERATOR"));
+        setShowAdminBoard(user.roles.includes("ROLE_ADMIN"));
+      }
+  
+      EventBus.on("logout", () => {
+        logOut();
+      });
+  
+      return () => {
+        EventBus.remove("logout");
+      };
+    }, []);
+  
+    const logOut = () => {
+      AuthService.logout();
+      setShowModeratorBoard(false);
+      setShowAdminBoard(false);
+      setCurrentUser(undefined);
+    };
     return (
         <BrowserRouter>
             <Header />
