@@ -6,10 +6,11 @@ import Footer from "components/Footer"
 import Income from "components/Income"
 import HomePage from "components/HomePage"
 import ErrorPage from "components/ErrorPage"
-import Auth from "components/Auth"
 import { useEffect, useState } from "react"
 import AuthService from "services/auth.service"
 import EventBus from "common/EventBus"
+import Login from "components/Login"
+import Register from "components/Register"
 
 function App() {
     const [showModeratorBoard, setShowModeratorBoard] = useState(false);
@@ -48,7 +49,8 @@ function App() {
                     <Route path="/" element={<HomePage />}></Route>
                     <Route path="/income" element={<Income />}></Route>
                     <Route path="/expenses" element={<Expenses />}></Route>
-                    <Route path="/auth" element={<Auth />}></Route>
+                    <Route path="/login" element={<Login />}></Route>
+                    <Route path="/register" element={<Register />}></Route>
                     <Route path="*" element={<ErrorPage />}></Route>
                 </Routes>
             </div>
