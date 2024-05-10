@@ -24,6 +24,7 @@ export class AuthController {
   @ApiCreatedResponse({ type: User })
   @ApiNotAcceptableResponse({ description: E_USER_EMAIL_TAKEN })
   async signUp(@Body() createUserDto: CreateUserDto) : Promise<Connection> {
+
     return this.authService.signUp(createUserDto);
   }
 }

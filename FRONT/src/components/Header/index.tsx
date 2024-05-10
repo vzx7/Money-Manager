@@ -1,16 +1,49 @@
 import { Link } from "react-router-dom"
 import "./Header.css"
+import AuthService from "services/auth.service";
+import { useEffect, useState } from "react";
+import EventBus from "common/EventBus";
 
 const Header = () => {
     const icon = require(".//headerLogo.png")
+    const [currentUser, setCurrentUser] = useState(undefined);
+
+    useEffect(() => {
+        const user = AuthService.getCurrentUser();
+
+        if (user) {
+            setCurrentUser(user);
+        }
+
+        EventBus.on("logout", () => {
+            logOut();
+        });
+
+        EventBus.on('login', () => {
+            const user = AuthService.getCurrentUser();
+            setCurrentUser(user);
+        })
+
+        return () => {
+            EventBus.remove("logout");
+            EventBus.remove("login");
+        };
+    }, []);
+
+    const logOut = (ev?: any) => {
+        ev && ev.preventDefault()
+        AuthService.logout();
+        setCurrentUser(undefined);
+        EventBus.dispatch('exit');
+    };
 
     return (
-        <header className="bg-sky-300 static max-w-2xl m-auto py-2 shadow-md">
+        <header className="bg-sky-300 static max-w-4xl m-auto py-2 shadow-md">
             <div className="flex items-center justify-between px-3">
                 <div className="flex items-center relative gap-1">
                     <img src={icon} alt="logo" className="h-9 w-9" />
                     <p className="text-3xl font-semibold pl-1 border-l-4 border-l-neutral-800">
-                        Тяжеловато
+                        Анализ финансов
                     </p>
                 </div>
                 <div className="flex">
@@ -38,6 +71,15 @@ const Header = () => {
                 <Link to="/expenses" className="header-link link">
                     Расходы
                 </Link>
+                    {!currentUser ? 
+                        (<Link to="/auth" className="header-link link">
+                            Авторизация
+                        </Link>)
+                        : 
+                        (<Link to="/logout" className="header-link link" onClick={logOut}>
+                            Выйти
+                        </Link>)
+                    }       
             </div>
         </header>
     )

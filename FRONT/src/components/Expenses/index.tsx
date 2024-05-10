@@ -6,6 +6,8 @@ import Statistics from "components/Statistics"
 import DeleteModal from "../DeleteModal"
 import { months } from "Scripts"
 import { getMonth } from "date-fns"
+import AuthService from "services/auth.service"
+import eventBus from "common/EventBus"
 
 const Expenses = () => {
     let [purchases, setPurchases] = useState(
@@ -20,6 +22,21 @@ const Expenses = () => {
     const indexDate = getMonth(new Date()) + 1
     const currentMonth = months[indexDate]
     const [defaultMonth, setDefaultMonth] = useState(currentMonth)
+    const [currentUser, setCurrentUser] = useState(undefined);
+
+    useEffect(() => {
+        const user = AuthService.getCurrentUser();
+
+        if (user) {
+            setCurrentUser(user);
+        }
+        eventBus.on('exit', () => {
+            setCurrentUser(undefined);
+        })
+        return () => {
+            eventBus.remove("exit");
+        };
+    }, []);
 
     useEffect(() => {
         setDefaultMonth(currentMonth)
@@ -35,43 +52,43 @@ const Expenses = () => {
 
     return (
         <div>
-            <h1 className="title">Учет расходов</h1>
-            <Form func={setPurchases} data={purchases} options={options} />
-            <Statistics
-                title="Статистика расходов"
-                copyData={filteredPurchase}
-                options={options}
-            />
-            <div className="flex flex-col py-10">
-                <Months
-                    data={purchases}
-                    func={setFilteredPurchase}
-                    defaultMonth={defaultMonth}
-                    setDefaultMonth={setDefaultMonth}
-                />
-                <DeleteModal
-                    data={purchases}
-                    func={setPurchases}
-                    defaultMonth={defaultMonth}
-                />
-                {filteredPurchase.length === 0 && (
-                    <div className="text-center font-semibold text-xl pt-16 pb-4">
-                        Нет внесенных расходов
-                    </div>
-                )}
-                {filteredPurchase.length > 0 && (
-                    <div className="rounded-t-md overflow-hidden">
-                        {filteredPurchase.map((purchase: any) => (
-                            <ElementCard
-                                dataElem={purchase}
-                                key={purchase.id}
-                                data={purchases}
-                                func={setPurchases}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
+            {currentUser ? (
+                <><h1 className="title">Учет расходов</h1><Form func={setPurchases} data={purchases} options={options} /><Statistics
+                    title="Статистика расходов"
+                    copyData={filteredPurchase}
+                    options={options} /><div className="flex flex-col py-10">
+                        <Months
+                            data={purchases}
+                            func={setFilteredPurchase}
+                            defaultMonth={defaultMonth}
+                            setDefaultMonth={setDefaultMonth} />
+                        <DeleteModal
+                            data={purchases}
+                            func={setPurchases}
+                            defaultMonth={defaultMonth} />
+                        {filteredPurchase.length === 0 && (
+                            <div className="text-center font-semibold text-xl pt-16 pb-4">
+                                Нет внесенных расходов
+                            </div>
+                        )}
+                        {filteredPurchase.length > 0 && (
+                            <div className="rounded-t-md overflow-hidden">
+                                {filteredPurchase.map((purchase: any) => (
+                                    <ElementCard
+                                        dataElem={purchase}
+                                        key={purchase.id}
+                                        data={purchases}
+                                        func={setPurchases} />
+                                ))}
+                            </div>
+                        )}
+                    </div></>
+            ) : (
+                <div>
+                    <p>Вы не авторизованы...</p>
+                    <p>Войдите или зарегистрируйтесь.</p>
+                </div>
+            )}
         </div>
     )
 }
