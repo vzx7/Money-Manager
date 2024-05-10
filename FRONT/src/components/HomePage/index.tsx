@@ -144,8 +144,8 @@ const HomePage = () => {
                             copyPurchases={copyPurchases}
                             budgetValue={budgetValue} />
                     </div></>
-            ) : (  
-                <div> 
+            ) : (
+                <div>
                     <p>Вы не авторизованы...</p>
                     <p>Войдите или зарегистрируйтесь.</p>
                 </div>
