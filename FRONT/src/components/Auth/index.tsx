@@ -1,13 +1,24 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import AuthService from 'services/auth.service';
 import { isEmail, isStrongPassword } from "validator";
+import EventBus from "../../common/EventBus";
+import eventBus from '../../common/EventBus';
 
 const Auth = () => {
-
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [successful, setSuccessful] = useState(false);
+
+  useEffect(() => {
+    eventBus.on('exit', () => {
+        setMessage('');
+        setSuccessful(false);
+    })
+    return () => {
+      EventBus.remove("exit");
+    };
+  }, []);
   
   const validEmail = (value: string) => {
     if (!isEmail(value)) {
@@ -50,8 +61,11 @@ const Auth = () => {
         setMessage('');
         AuthService.login(email, password).then(
           (response) => {
-            setMessage(response.data.message);
+            console.log(response)
+            setMessage(`${response.user.firstName}, с возвращением!`);
+            EventBus.dispatch("login");
             setSuccessful(true);
+
           },
           (error) => {
             const resMessage =
@@ -112,20 +126,22 @@ const Auth = () => {
       event.preventDefault();
       setError('');
       //@ts-ignore
-      const username = refName.current.value; //@ts-ignore
+      const userFirstName = refFirstName.current.value; //@ts-ignore
+      const userLastName = refLastName.current.value; //@ts-ignore
       const email = refEmail.current.value;//@ts-ignore
       const password = refPassworsd.current.value;
       
       if(
         validEmail(email)
         && validPassword(password)
-        && validUsername(username)//@ts-ignore
+        && validUsername(userFirstName)//@ts-ignore
+        && validUsername(userLastName)//@ts-ignore
         && validRepPassword(refRepPassworsd.current.value)
       ) {
         setMessage('');
-        AuthService.register(username, email, password).then(
+        AuthService.register(userFirstName, userLastName, email, password).then(
           (response) => {
-            setMessage(response.data.message);
+            setMessage(`${response.user.firstName}, поздравляем вы зарегестрированы!`);
             setSuccessful(true);
           },
           (error) => {
@@ -143,7 +159,8 @@ const Auth = () => {
       }
     }
     const refRepPassworsd = useRef(null);
-    const refName = useRef(null);
+    const refFirstName = useRef(null);
+    const refLastName = useRef(null);
     return (
       <div className="bg-blue-400 text-white rounded-2xl shadow-2xl  flex flex-col w-full  md:w-1/3 items-center max-w-4xl transition duration-1000 ease-in">
         <h2 className='p-3 text-2xl font-bold text-white'>Авторизация</h2>
@@ -154,7 +171,8 @@ const Auth = () => {
             onSubmit={(event) => handleClick(event)}
             className="flex flex-col items-center justify-center mt-2 px-3 text-black"
         >
-          <input ref={refName} type="text" className='rounded-2xl px-2 py-1 w-4/5 md:w-full border-[1px] border-blue-400 m-1 focus:shadow-md focus:border-pink-400 focus:outline-none focus:ring-0' placeholder='Name'></input>
+          <input ref={refFirstName} type="text" className='rounded-2xl px-2 py-1 w-4/5 md:w-full border-[1px] border-blue-400 m-1 focus:shadow-md focus:border-pink-400 focus:outline-none focus:ring-0' placeholder='First Name'></input>
+          <input ref={refLastName} type="text" className='rounded-2xl px-2 py-1 w-4/5 md:w-full border-[1px] border-blue-400 m-1 focus:shadow-md focus:border-pink-400 focus:outline-none focus:ring-0' placeholder='Last Name'></input>
           <input ref={refEmail} type='email' className='rounded-2xl px-2 py-1 w-4/5 md:w-full border-[1px] border-blue-400 m-1 focus:shadow-md focus:border-pink-400 focus:outline-none focus:ring-0' placeholder='Email'></input>
           <input ref={refPassworsd} type="password" className='rounded-2xl px-2 py-1 w-4/5 md:w-full border-[1px] border-blue-400 m-1 focus:shadow-md focus:border-pink-400 focus:outline-none focus:ring-0' placeholder='Password'></input>
           <input ref={refRepPassworsd}  type="password" className='rounded-2xl px-2 py-1 w-4/5 md:w-full border-[1px] border-blue-400 m-1 focus:shadow-md focus:border-pink-400 focus:outline-none focus:ring-0' placeholder='Password'></input>
@@ -187,7 +205,7 @@ const Auth = () => {
         }
       </main>
       <div className="hidden md:inline-flex flex-col flex-1 space-y-1">
-        { successful && message && <p>{message}</p>}
+        { successful && message && <p className='px-3 m-5 text-green-500'>{message}</p>}
         </div>
     </div>
   )

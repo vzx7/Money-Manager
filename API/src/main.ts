@@ -17,7 +17,7 @@ async function bootstrap() {
 
   // -- Cors setup
   app.enableCors({
-    origin: false, // Specify the allowed origins.  I'm setting false to allow requests from any origin
+    origin: true, // Specify the allowed origins.  I'm setting false to allow requests from any origin
     // Find more configuration options here: https://github.com/expressjs/cors#configuration-options
   });
 

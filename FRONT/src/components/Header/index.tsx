@@ -19,8 +19,14 @@ const Header = () => {
             logOut();
         });
 
+        EventBus.on('login', () => {
+            const user = AuthService.getCurrentUser();
+            setCurrentUser(user);
+        })
+
         return () => {
             EventBus.remove("logout");
+            EventBus.remove("login");
         };
     }, []);
 
@@ -28,6 +34,7 @@ const Header = () => {
         ev && ev.preventDefault()
         AuthService.logout();
         setCurrentUser(undefined);
+        EventBus.dispatch('exit');
     };
 
     return (

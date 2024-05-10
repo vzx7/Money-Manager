@@ -2,14 +2,33 @@ import cn from "classnames"
 import HomeStatistic from "components/HomeStatistic"
 import { getAmount } from "Scripts"
 import { PurchaseType } from "components/Form"
-import { useState, FormEvent } from "react"
+import { useState, FormEvent, useEffect } from "react"
 import "./HomePage.css"
+import AuthService from "services/auth.service"
+import eventBus from "common/EventBus"
 
 const HomePage = () => {
     const image = require(".//transfer-money.png")
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [isActive, setIsActive] = useState<boolean>(false)
     const [currentUser, setCurrentUser] = useState(undefined);
+    useEffect(() => {
+        
+        const user = AuthService.getCurrentUser();
+    
+        if (user) {
+          setCurrentUser(user);
+        }
+
+        eventBus.on('exit', () => {
+            setCurrentUser(undefined);
+        })
+
+        return () => {
+            eventBus.remove("exit");
+        };
+
+      }, []);
 
     let copyIncome: PurchaseType[] = localStorage.getItem("income")
         ? JSON.parse(localStorage.getItem("income") || "")
