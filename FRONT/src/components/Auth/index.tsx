@@ -3,6 +3,7 @@ import AuthService from 'services/auth.service';
 import { isEmail, isStrongPassword } from "validator";
 import EventBus from "../../common/EventBus";
 import eventBus from '../../common/EventBus';
+import TrnsactionService from 'services/transaction.service';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -61,11 +62,10 @@ const Auth = () => {
         setMessage('');
         AuthService.login(email, password).then(
           (response) => {
-            console.log(response)
+            
             setMessage(`${response.user.firstName}, с возвращением!`);
             EventBus.dispatch("login");
             setSuccessful(true);
-
           },
           (error) => {
             const resMessage =

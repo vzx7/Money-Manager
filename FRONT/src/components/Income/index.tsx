@@ -50,6 +50,7 @@ const Income = () => {
     }, [income, currentMonth])
 
     useEffect(() => {
+        console.log(income)
         localStorage.setItem("income", JSON.stringify(income))
     }, [income])
 
