@@ -1,8 +1,41 @@
 import { Link } from "react-router-dom"
 import "./Header.css"
+import AuthService from "services/auth.service";
+import { useEffect, useState } from "react";
+import EventBus from "common/EventBus";
 
 const Header = () => {
     const icon = require(".//headerLogo.png")
+    const [currentUser, setCurrentUser] = useState(undefined);
+
+    useEffect(() => {
+        const user = AuthService.getCurrentUser();
+
+        if (user) {
+            setCurrentUser(user);
+        }
+
+        EventBus.on("logout", () => {
+            logOut();
+        });
+
+        EventBus.on('login', () => {
+            const user = AuthService.getCurrentUser();
+            setCurrentUser(user);
+        })
+
+        return () => {
+            EventBus.remove("logout");
+            EventBus.remove("login");
+        };
+    }, []);
+
+    const logOut = (ev?: any) => {
+        ev && ev.preventDefault()
+        AuthService.logout();
+        setCurrentUser(undefined);
+        EventBus.dispatch('exit');
+    };
 
     return (
         <header className="bg-sky-300 static max-w-4xl m-auto py-2 shadow-md">
@@ -38,9 +71,15 @@ const Header = () => {
                 <Link to="/expenses" className="header-link link">
                     Расходы
                 </Link>
-                <Link to="/auth" className="header-link link">
-                    Авторизация
-                </Link>
+                    {!currentUser ? 
+                        (<Link to="/auth" className="header-link link">
+                            Авторизация
+                        </Link>)
+                        : 
+                        (<Link to="/logout" className="header-link link" onClick={logOut}>
+                            Выйти
+                        </Link>)
+                    }       
             </div>
         </header>
     )

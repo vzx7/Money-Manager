@@ -7,7 +7,7 @@ const Footer = () => {
             <p className="footer-link">Политика конфиденциальности</p>
             <p className="footer-link">Вопросы, ошибки, предложения</p>
             <p className="font-semibold w-full text-neutral-800 text-end footer-logo">
-                © youfinncialmanager.ru, 2024—2024
+                © yourfinncialmanager.ru, 2024—2024
             </p>
         </footer>
     )

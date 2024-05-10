@@ -6,6 +6,8 @@ import ElementCard from "components/ElementCard"
 import DeleteModal from "components/DeleteModal"
 import { months } from "Scripts"
 import { getMonth } from "date-fns"
+import AuthService from "services/auth.service"
+import eventBus from "common/EventBus"
 
 const Income = () => {
     let [income, setIncome] = useState(
@@ -28,6 +30,20 @@ const Income = () => {
     const currentMonth = months[indexDate]
     const [defaultMonth, setDefaultMonth] = useState(currentMonth)
     const [currentUser, setCurrentUser] = useState(undefined);
+    useEffect(() => {
+        const user = AuthService.getCurrentUser();
+    
+        if (user) {
+          setCurrentUser(user);
+        }
+
+        eventBus.on('exit', () => {
+            setCurrentUser(undefined);
+        })
+        return () => {
+            eventBus.remove("exit");
+        };
+      }, []);
 
     useEffect(() => {
         setDefaultMonth(currentMonth)

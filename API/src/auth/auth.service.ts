@@ -15,7 +15,7 @@ export class AuthService {
 
 
   getAccessToken (user: User) : string {
-    return this.jwtService.sign({ sub: user.id, username: user.email });
+    return this.jwtService.sign({ sub: user.id, username: user.email }, { secret: process.env.JWT_SECRET });
   }
 
   async signUp(createUserDto: CreateUserDto) {
