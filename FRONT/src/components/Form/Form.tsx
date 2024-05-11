@@ -1,52 +1,55 @@
 import { useState, FormEvent } from "react"
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
-import { v4 as uuidv4 } from "uuid"
 import "./Form.css"
+import TransactionService from "services/transaction.service"
+import { Type, categories } from "services/scripts"
 
 export type PurchaseType = {
-    id: string
+    id: number
+    type: string
     date: string
     price: string
     category: string
-    comment: string
     isChecked: boolean
 }
 
 type Props = {
     func: (data: PurchaseType[]) => void
     data: PurchaseType[]
-    options: string[]
+    type: Type
 }
 
-const Form = ({ func, data, options }: Props) => {
-    const date = format(new Date(), "dd MMMM yyyy", { locale: ru })
-
+const Form = ({ func, data, type }: Props) => {
+    
+    const options = categories[type];
     const [price, setPrice] = useState("")
     const [category, setCategory] = useState(options[0])
     const [comment, setComment] = useState("")
 
     const handleClick = (event: FormEvent) => {
         event.preventDefault()
-        const item = {
-            id: uuidv4(),
-            date,
-            price:
-                new Intl.NumberFormat("ru-RU").format(
-                    Math.abs(Math.round(+price))
-                ) + ".00 ₽",
-            category,
-            comment,
-            isChecked: false
-        }
-        addElement(item)
-        setPrice("")
-        setCategory(options[0])
-        setComment("")
-    }
 
-    const addElement = (newElem: PurchaseType) => {
-        func([newElem, ...data])
+        const addElement = (newElem: PurchaseType) => {
+            func([newElem, ...data])
+        }
+
+        TransactionService.addTransaction({ category: type === 'credit' ? 'revenue' : 'expense', reason: category, amount: +price }).then((tr) => {
+            const item = {
+                id: tr.id,
+                type: tr.type,
+                date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
+                price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
+                category: tr.reason,
+                isChecked: false
+            }
+            addElement(item)
+            setPrice("")
+            setCategory(options[0])
+            setComment("")
+        }).catch((er) => {
+            console.error(`Транзакцию невозмжоно сохранить! Ошибка: ${er.message}`)
+        })
     }
 
     return (
@@ -76,13 +79,6 @@ const Form = ({ func, data, options }: Props) => {
                     })}
                 </select>
             </div>
-            <textarea
-                onChange={(event) => setComment(event.target.value)}
-                value={comment}
-                name="comment"
-                className="h-12 input-form"
-                placeholder="Комментарий"
-            ></textarea>
             <button type="submit" className="form-button">
                 Добавить
             </button>

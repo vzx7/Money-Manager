@@ -1,12 +1,12 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { PurchaseType } from "../Form"
 import "./Statistics.css"
-import { COLORS, colorsForClassName, getAmount } from "Scripts"
+import { COLORS, categories, colorsForClassName, getAmount, Type } from "../../services/scripts"
 
 type Props = {
     title: string
     copyData: PurchaseType[]
-    options: string[]
+    type: Type
 }
 
 type renderCustomizedLabelType = {
@@ -19,12 +19,14 @@ type renderCustomizedLabelType = {
     index: number
 }
 
-const Statistics = ({ title, copyData, options }: Props) => {
+const Statistics = ({ title, copyData, type }: Props) => {
+    const options = categories[type];
     const filterCategories = (i: number) => {
         const categoryArr = copyData.filter(
             (purchase: PurchaseType) => purchase.category === options[i]
         )
-        const categoriesPriceArr = categoryArr.map((c) => c.price.split("."))
+        const categoriesPriceArr = categoryArr.map((c) => c.price.replace(' ₽', '').split("."))
+
         let result = categoriesPriceArr.map((c) =>
             // @ts-ignore
             Number(c[0].match(/\S/g).join(""))

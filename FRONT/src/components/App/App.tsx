@@ -1,12 +1,12 @@
 import "./App.css"
-import Expenses from "components/Expenses"
+import Expenses from "components/Expenses/Expenses"
 import Header from "components/Header"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Footer from "components/Footer"
+import Footer from "components/Footer/Footer"
 import Income from "components/Income"
 import HomePage from "components/HomePage"
-import ErrorPage from "components/ErrorPage"
-import Auth from "components/Auth"
+import ErrorPage from "components/ErrorPage/ErrorPage"
+import Auth from "components/Auth/Auth"
 
 function App() {
 

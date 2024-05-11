@@ -1,7 +1,7 @@
 import { FormEvent } from "react"
 import { PurchaseType } from "../Form"
 import "./Months.css"
-import { months } from "Scripts"
+import { months } from "../../services/scripts"
 
 type Props = {
     data: PurchaseType[]

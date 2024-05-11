@@ -1,23 +1,48 @@
 import cn from "classnames"
 import HomeStatistic from "components/HomeStatistic"
-import { getAmount } from "Scripts"
+import { getAmount } from "../../services/scripts"
 import { PurchaseType } from "components/Form"
 import { useState, FormEvent, useEffect } from "react"
 import "./HomePage.css"
 import AuthService from "services/auth.service"
 import eventBus from "common/EventBus"
+import TransactionService from "services/transaction.service"
+import { format } from "date-fns"
+import { ru } from "date-fns/locale"
 
 const HomePage = () => {
     const image = require(".//transfer-money.png")
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [isActive, setIsActive] = useState<boolean>(false)
     const [currentUser, setCurrentUser] = useState(undefined);
+    const [copyIncome, setCopyIncome] = useState<PurchaseType[]>([]);
+    const [copyPurchases, setCopyPurchases] = useState<PurchaseType[]>([]);
+
     useEffect(() => {
-        
+
         const user = AuthService.getCurrentUser();
-    
+
         if (user) {
-          setCurrentUser(user);
+            setCurrentUser(user);
+            TransactionService.getTransactions().then(trs => {
+                const incomes: PurchaseType[] = [];
+                const purchases: PurchaseType[] = [];
+                trs.data.data.forEach((tr: any) => {
+                    const item = {
+                        id: tr.id,
+                        type: tr.type,
+                        date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
+                        price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
+                        category: tr.reason,
+                        isChecked: false
+                    };
+
+                    if (tr.type === 'debit') purchases.push(item);
+                    if (tr.type === 'credit') incomes.push(item);
+                })
+                setCopyIncome(incomes);
+                setCopyPurchases(purchases);
+            })
         }
 
         eventBus.on('exit', () => {
@@ -28,15 +53,9 @@ const HomePage = () => {
             eventBus.remove("exit");
         };
 
-      }, []);
+    }, []);
 
-    let copyIncome: PurchaseType[] = localStorage.getItem("income")
-        ? JSON.parse(localStorage.getItem("income") || "")
-        : []
 
-    let copyPurchases: PurchaseType[] = localStorage.getItem("purchases")
-        ? JSON.parse(localStorage.getItem("purchases") || "")
-        : []
 
     const [budget, setBudget] = useState<string>(
         localStorage.getItem("budget")
@@ -49,6 +68,7 @@ const HomePage = () => {
         ".00 ₽"
 
     const handleClick = (event: FormEvent) => {
+        console.log(budget)
         event.preventDefault()
         localStorage.setItem("budget", JSON.stringify(budget))
         setIsActive(false)
