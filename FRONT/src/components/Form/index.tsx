@@ -3,9 +3,10 @@ import { format } from "date-fns"
 import { ru } from "date-fns/locale"
 import { v4 as uuidv4 } from "uuid"
 import "./Form.css"
+import TrnsactionService from "services/transaction.service"
 
 export type PurchaseType = {
-    id: string
+    id: number
     date: string
     price: string
     category: string
@@ -20,7 +21,7 @@ type Props = {
 }
 
 const Form = ({ func, data, options }: Props) => {
-    const date = format(new Date(), "dd MMMM yyyy", { locale: ru })
+    
 
     const [price, setPrice] = useState("")
     const [category, setCategory] = useState(options[0])
@@ -28,25 +29,27 @@ const Form = ({ func, data, options }: Props) => {
 
     const handleClick = (event: FormEvent) => {
         event.preventDefault()
-        const item = {
-            id: uuidv4(),
-            date,
-            price:
-                new Intl.NumberFormat("ru-RU").format(
-                    Math.abs(Math.round(+price))
-                ) + ".00 ₽",
-            category,
-            comment,
-            isChecked: false
-        }
-        addElement(item)
-        setPrice("")
-        setCategory(options[0])
-        setComment("")
-    }
 
-    const addElement = (newElem: PurchaseType) => {
-        func([newElem, ...data])
+        const addElement = (newElem: PurchaseType) => {
+            func([newElem, ...data])
+        }
+        
+        TrnsactionService.addTransaction({ category: 'revenue', reason: category, amount: +price }).then((tr) => {
+            const item = {
+                id: tr.id,
+                date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
+                price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
+                category: tr.reason,
+                comment: '',
+                isChecked: false
+            }
+            addElement(item)
+            setPrice("")
+            setCategory(options[0])
+            setComment("")
+        }).catch((er) => {
+            console.error(`Транзакцию невозмжоно сохранить! Ошибка: ${er.message}`)
+        })
     }
 
     return (

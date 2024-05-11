@@ -9,7 +9,7 @@ type Props = {
 }
 
 const ElementCard = ({ data, dataElem, func }: Props) => {
-    const handleChange = (id: string) => {
+    const handleChange = (id: number) => {
         func(
             data.map((elem) => {
                 if (elem.id === id) {

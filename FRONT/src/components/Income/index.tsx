@@ -32,9 +32,9 @@ const Income = () => {
     const [currentUser, setCurrentUser] = useState(undefined);
     useEffect(() => {
         const user = AuthService.getCurrentUser();
-    
+
         if (user) {
-          setCurrentUser(user);
+            setCurrentUser(user);
         }
 
         eventBus.on('exit', () => {
@@ -43,7 +43,7 @@ const Income = () => {
         return () => {
             eventBus.remove("exit");
         };
-      }, []);
+    }, []);
 
     useEffect(() => {
         setDefaultMonth(currentMonth)
@@ -61,10 +61,13 @@ const Income = () => {
     return (
         <div>
             {currentUser ? (
-                <><h1 className="title">Учет доходов</h1><Form func={setIncome} data={income} options={options} /><Statistics
-                    title="Статистика доходов"
-                    copyData={filteredIncome}
-                    options={options} /><div className="flex flex-col py-10">
+                <><h1 className="title">Учет доходов</h1>
+                    <Form func={setIncome} data={income} options={options} />
+                    <Statistics
+                        title="Статистика доходов"
+                        copyData={filteredIncome}
+                        options={options} />
+                    <div className="flex flex-col py-10">
                         <Months
                             data={income}
                             func={setFilteredIncome}
@@ -93,11 +96,11 @@ const Income = () => {
                     </div></>
             ) : (
                 <div>
-                <p>Вы не авторизованы...</p>
-                <p>Войдите или зарегистрируйтесь.</p>
-            </div>
-            ) }
-            
+                    <p>Вы не авторизованы...</p>
+                    <p>Войдите или зарегистрируйтесь.</p>
+                </div>
+            )}
+
         </div>
     )
 }
