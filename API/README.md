@@ -11,10 +11,6 @@ Simple secure accounting API allowing users to add their income and expenses.
 - Swagger
 
 
-## Demo
-[https://cb-accounting-app-api.herokuapp.com/](https://cb-accounting-app-api.herokuapp.com/)
-
-
 ## Installation
 
 ```bash
