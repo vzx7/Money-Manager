@@ -43,7 +43,6 @@ const Income = () => {
                         date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
                         price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
                         category: tr.reason,
-                        comment: '',
                         isChecked: false
                     });
                 })

@@ -42,9 +42,7 @@ const ElementCard = ({ data, dataElem, func }: Props) => {
                             ></input>
                             <p className="py-1 pl-1">{dataElem.category}</p>
                         </div>
-                        <p className="text-sm pl-1 pr-2 text-gray-600">
-                            {dataElem.comment}
-                        </p>
+
                     </div>
                     <p className="w-1/3 text-end purchase-price">
                         {dataElem.price}

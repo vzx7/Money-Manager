@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
 import Form, { PurchaseType } from "components/Form"
-import ElementCard from "components/ElementCard/ElementCard"
+import ElementCard from "components/ElementCard"
 import Months from "components/Months"
 import Statistics from "components/Statistics"
-import DeleteModal from "../DeleteModal/DeleteModal"
+import DeleteModal from "../DeleteModal"
 import { months } from "../../services/scripts"
 import { getMonth } from "date-fns"
 import AuthService from "services/auth.service"
@@ -38,7 +38,6 @@ const Expenses = () => {
                         date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
                         price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
                         category: tr.reason,
-                        comment: '',
                         isChecked: false
                     });
                 })

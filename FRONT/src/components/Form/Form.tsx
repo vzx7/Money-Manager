@@ -10,7 +10,6 @@ export type PurchaseType = {
     date: string
     price: string
     category: string
-    comment: string
     isChecked: boolean
 }
 
@@ -41,8 +40,6 @@ const Form = ({ func, data, options }: Props) => {
                 date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
                 price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
                 category: tr.reason,
-                //TODO добавить сохранение комментариев
-                comment: '',
                 isChecked: false
             }
             addElement(item)
@@ -81,13 +78,6 @@ const Form = ({ func, data, options }: Props) => {
                     })}
                 </select>
             </div>
-            <textarea
-                onChange={(event) => setComment(event.target.value)}
-                value={comment}
-                name="comment"
-                className="h-12 input-form"
-                placeholder="Комментарий"
-            ></textarea>
             <button type="submit" className="form-button">
                 Добавить
             </button>
