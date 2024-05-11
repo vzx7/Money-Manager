@@ -1,12 +1,12 @@
 import { useState, FormEvent } from "react"
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
-import { v4 as uuidv4 } from "uuid"
 import "./Form.css"
-import TrnsactionService from "services/transaction.service"
+import TransactionService from "services/transaction.service"
 
 export type PurchaseType = {
     id: number
+    type: string
     date: string
     price: string
     category: string
@@ -33,13 +33,15 @@ const Form = ({ func, data, options }: Props) => {
         const addElement = (newElem: PurchaseType) => {
             func([newElem, ...data])
         }
-        
-        TrnsactionService.addTransaction({ category: 'revenue', reason: category, amount: +price }).then((tr) => {
+
+        TransactionService.addTransaction({ category: 'revenue', reason: category, amount: +price }).then((tr) => {
             const item = {
                 id: tr.id,
+                type: tr.type,
                 date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
                 price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
                 category: tr.reason,
+                //TODO добавить сохранение комментариев
                 comment: '',
                 isChecked: false
             }

@@ -1,7 +1,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { PurchaseType } from "../Form"
 import "./Statistics.css"
-import { COLORS, colorsForClassName, getAmount } from "Scripts"
+import { COLORS, colorsForClassName, getAmount } from "../../services/scripts"
 
 type Props = {
     title: string
@@ -25,10 +25,12 @@ const Statistics = ({ title, copyData, options }: Props) => {
             (purchase: PurchaseType) => purchase.category === options[i]
         )
         const categoriesPriceArr = categoryArr.map((c) => c.price.split("."))
+        console.log(categoriesPriceArr)
         let result = categoriesPriceArr.map((c) =>
             // @ts-ignore
             Number(c[0].match(/\S/g).join(""))
         )
+        console.log(result)
         return result.reduce((a, b) => a + b, 0)
     }
 

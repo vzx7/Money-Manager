@@ -3,7 +3,7 @@ import AuthService from 'services/auth.service';
 import { isEmail, isStrongPassword } from "validator";
 import EventBus from "../../common/EventBus";
 import eventBus from '../../common/EventBus';
-import TrnsactionService from 'services/transaction.service';
+import TransactionService from 'services/transaction.service';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);

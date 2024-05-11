@@ -1,20 +1,19 @@
 import { useState, useEffect } from "react"
-import Form from "components/Form"
-import ElementCard from "components/ElementCard"
+import Form, { PurchaseType } from "components/Form"
+import ElementCard from "components/ElementCard/ElementCard"
 import Months from "components/Months"
 import Statistics from "components/Statistics"
-import DeleteModal from "../DeleteModal"
-import { months } from "Scripts"
+import DeleteModal from "../DeleteModal/DeleteModal"
+import { months } from "../../services/scripts"
 import { getMonth } from "date-fns"
 import AuthService from "services/auth.service"
 import eventBus from "common/EventBus"
+import TransactionService from "services/transaction.service"
+import { format } from "date-fns"
+import { ru } from "date-fns/locale"
 
 const Expenses = () => {
-    let [purchases, setPurchases] = useState(
-        localStorage.getItem("purchases")
-            ? JSON.parse(localStorage.getItem("purchases") || "")
-            : []
-    )
+    let [purchases, setPurchases] = useState<PurchaseType[]>([])
 
     const [filteredPurchase, setFilteredPurchase] = useState(purchases)
     const options = ["Еда", "Здоровье", "Жилье", "Транспорт", "Досуг", "Прочее"]
@@ -26,9 +25,25 @@ const Expenses = () => {
 
     useEffect(() => {
         const user = AuthService.getCurrentUser();
-
         if (user) {
             setCurrentUser(user);
+            
+            TransactionService.getTransactions().then(trs => {
+                const purchases: PurchaseType[] = [];
+                trs.data.data.forEach((tr: any) => {
+                    if(tr.type !== 'debet') return;
+                    purchases.push({
+                        id: tr.id,
+                        type: tr.type,
+                        date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
+                        price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
+                        category: tr.reason,
+                        comment: '',
+                        isChecked: false
+                    });
+                })
+                purchases.length > 0 && setPurchases(purchases);
+            })
         }
         eventBus.on('exit', () => {
             setCurrentUser(undefined);
@@ -42,9 +57,9 @@ const Expenses = () => {
         setDefaultMonth(currentMonth)
     }, [purchases, currentMonth])
 
-    useEffect(() => {
+/*     useEffect(() => {
         localStorage.setItem("purchases", JSON.stringify(purchases))
-    }, [purchases])
+    }, [purchases]) */
 
     useEffect(() => {
         setFilteredPurchase(purchases)
@@ -53,7 +68,9 @@ const Expenses = () => {
     return (
         <div>
             {currentUser ? (
-                <><h1 className="title">Учет расходов</h1><Form func={setPurchases} data={purchases} options={options} /><Statistics
+                <><h1 className="title">Учет расходов</h1>
+                <Form func={setPurchases} data={purchases} options={options} />
+                <Statistics
                     title="Статистика расходов"
                     copyData={filteredPurchase}
                     options={options} /><div className="flex flex-col py-10">

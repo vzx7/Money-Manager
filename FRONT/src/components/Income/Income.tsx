@@ -1,20 +1,18 @@
 import { useState, useEffect } from "react"
-import Form from "components/Form"
+import Form, { PurchaseType } from "components/Form"
 import Months from "components/Months"
 import Statistics from "components/Statistics"
 import ElementCard from "components/ElementCard"
 import DeleteModal from "components/DeleteModal"
-import { months } from "Scripts"
-import { getMonth } from "date-fns"
+import { months } from "../../services/scripts"
+import { format, getMonth } from "date-fns"
 import AuthService from "services/auth.service"
 import eventBus from "common/EventBus"
+import { ru } from "date-fns/locale"
+import TransactionService from "services/transaction.service"
 
 const Income = () => {
-    let [income, setIncome] = useState(
-        localStorage.getItem("income")
-            ? JSON.parse(localStorage.getItem("income") || "")
-            : []
-    )
+    let [income, setIncome] = useState<PurchaseType[] | []>([])
 
     const [filteredIncome, setFilteredIncome] = useState(income)
     const options = [
@@ -35,6 +33,22 @@ const Income = () => {
 
         if (user) {
             setCurrentUser(user);
+            TransactionService.getTransactions().then(trs => {
+                const incomes: PurchaseType[] = [];
+                trs.data.data.forEach((tr: any) => {
+                    if(tr.type !== 'credit') return;
+                    incomes.push({
+                        id: tr.id,
+                        type: tr.type,
+                        date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
+                        price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
+                        category: tr.reason,
+                        comment: '',
+                        isChecked: false
+                    });
+                })
+                incomes.length > 0 && setIncome(incomes);
+            })
         }
 
         eventBus.on('exit', () => {
@@ -49,10 +63,9 @@ const Income = () => {
         setDefaultMonth(currentMonth)
     }, [income, currentMonth])
 
-    useEffect(() => {
-        console.log(income)
+/*     useEffect(() => {
         localStorage.setItem("income", JSON.stringify(income))
-    }, [income])
+    }, [income]) */
 
     useEffect(() => {
         setFilteredIncome(income)

@@ -1,23 +1,46 @@
 import cn from "classnames"
 import HomeStatistic from "components/HomeStatistic"
-import { getAmount } from "Scripts"
+import { getAmount } from "../../services/scripts"
 import { PurchaseType } from "components/Form"
 import { useState, FormEvent, useEffect } from "react"
 import "./HomePage.css"
 import AuthService from "services/auth.service"
 import eventBus from "common/EventBus"
+import TransactionService from "services/transaction.service"
+import { format } from "date-fns"
+import { ru } from "date-fns/locale"
 
 const HomePage = () => {
     const image = require(".//transfer-money.png")
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [isActive, setIsActive] = useState<boolean>(false)
     const [currentUser, setCurrentUser] = useState(undefined);
+
+    let copyIncome: PurchaseType[] = [];
+    let copyPurchases: PurchaseType[] = [];
+
     useEffect(() => {
-        
+
         const user = AuthService.getCurrentUser();
-    
+
         if (user) {
-          setCurrentUser(user);
+            setCurrentUser(user);
+            TransactionService.getTransactions().then(trs => {
+                trs.data.data.forEach((tr: any) => {
+                    const item = {
+                        id: tr.id,
+                        type: tr.type,
+                        date: format(Date.parse(tr.date), "dd MMMM yyyy", { locale: ru }),
+                        price: new Intl.NumberFormat("ru-RU").format(tr.amount) + " ₽",
+                        category: tr.reason,
+                        comment: '',
+                        isChecked: false
+                    };
+
+                    if (tr.type === 'debet') copyPurchases.push(item);
+                    if (tr.type === 'credit') copyIncome.push(item);
+                })
+            })
         }
 
         eventBus.on('exit', () => {
@@ -28,15 +51,9 @@ const HomePage = () => {
             eventBus.remove("exit");
         };
 
-      }, []);
+    }, []);
 
-    let copyIncome: PurchaseType[] = localStorage.getItem("income")
-        ? JSON.parse(localStorage.getItem("income") || "")
-        : []
 
-    let copyPurchases: PurchaseType[] = localStorage.getItem("purchases")
-        ? JSON.parse(localStorage.getItem("purchases") || "")
-        : []
 
     const [budget, setBudget] = useState<string>(
         localStorage.getItem("budget")

@@ -63,11 +63,11 @@ const deleteTransactionsById = (id) => {
 };
 
 
-const TrnsactionService = {
+const TransactionService = {
   getTransactions,
   getTransactionsById,
   deleteTransactionsById,
   addTransaction
 };
 
-export default TrnsactionService;
+export default TransactionService;

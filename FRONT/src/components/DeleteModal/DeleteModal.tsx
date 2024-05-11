@@ -1,9 +1,9 @@
 import cn from "classnames"
 import { PurchaseType } from "../Form"
 import { useState, useEffect } from "react"
-import { changeState } from "Scripts"
-import { resolvePluralForm } from "Scripts"
+import { changeState, resolvePluralForm } from "../../services/scripts"
 import "./DeleteModal.css"
+import TransactionService from "services/transaction.service"
 
 type Props = {
     data: PurchaseType[]
@@ -23,6 +23,14 @@ const DeleteModal = ({ data, func, defaultMonth }: Props) => {
         const filteredArr = data.filter(
             (elem: PurchaseType) => elem.isChecked === false
         )
+        const delElements = data.filter(
+            (elem: PurchaseType) => elem.isChecked === true
+        )
+        delElements.forEach(x => {
+            TransactionService.deleteTransactionsById(x.id).then((res) => {
+                console.log(res)
+            })
+        })
         func(filteredArr)
         setIsOpen(false)
     }

@@ -10,7 +10,7 @@ import {
     ResponsiveContainer
 } from "recharts"
 import { PurchaseType } from "components/Form"
-import { getAmount } from "Scripts"
+import { getAmount } from "../../services/scripts"
 
 type Props = {
     copyPurchases: PurchaseType[]
