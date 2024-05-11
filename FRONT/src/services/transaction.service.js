@@ -8,7 +8,6 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 axios.interceptors.request.use(
   (config) => {
       const user = JSON.parse(localStorage.getItem('user'));
-      console.log(user)
 
       if (user) {
           config.headers['Authorization'] = `Bearer ${user.accessToken}`;

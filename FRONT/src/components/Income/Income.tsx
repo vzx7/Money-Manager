@@ -15,14 +15,6 @@ const Income = () => {
     let [income, setIncome] = useState<PurchaseType[] | []>([])
 
     const [filteredIncome, setFilteredIncome] = useState(income)
-    const options = [
-        "Зарплата",
-        "Премия",
-        "Инвестиции",
-        "Переводы",
-        "Внесение наличных",
-        "Прочее"
-    ]
 
     const indexDate = getMonth(new Date()) + 1
     const currentMonth = months[indexDate]
@@ -74,11 +66,11 @@ const Income = () => {
         <div>
             {currentUser ? (
                 <><h1 className="title">Учет доходов</h1>
-                    <Form func={setIncome} data={income} options={options} />
+                    <Form func={setIncome} data={income} type="credit" />
                     <Statistics
                         title="Статистика доходов"
                         copyData={filteredIncome}
-                        options={options} />
+                        type="credit" />
                     <div className="flex flex-col py-10">
                         <Months
                             data={income}

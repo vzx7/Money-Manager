@@ -3,6 +3,7 @@ import { format } from "date-fns"
 import { ru } from "date-fns/locale"
 import "./Form.css"
 import TransactionService from "services/transaction.service"
+import { Type, categories } from "services/scripts"
 
 export type PurchaseType = {
     id: number
@@ -16,12 +17,12 @@ export type PurchaseType = {
 type Props = {
     func: (data: PurchaseType[]) => void
     data: PurchaseType[]
-    options: string[]
+    type: Type
 }
 
-const Form = ({ func, data, options }: Props) => {
+const Form = ({ func, data, type }: Props) => {
     
-
+    const options = categories[type];
     const [price, setPrice] = useState("")
     const [category, setCategory] = useState(options[0])
     const [comment, setComment] = useState("")
@@ -33,7 +34,7 @@ const Form = ({ func, data, options }: Props) => {
             func([newElem, ...data])
         }
 
-        TransactionService.addTransaction({ category: 'revenue', reason: category, amount: +price }).then((tr) => {
+        TransactionService.addTransaction({ category: type === 'credit' ? 'revenue' : 'expense', reason: category, amount: +price }).then((tr) => {
             const item = {
                 id: tr.id,
                 type: tr.type,

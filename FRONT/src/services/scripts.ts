@@ -72,7 +72,7 @@ export const colorsForClassName = [
 // функция для вычиления итоговой суммы доходов/расходов(Statistic/HomePage)
 export const getAmount = (data: PurchaseType[]) => {
     const allCategoryArr = data.map((elem: PurchaseType) =>
-        elem.price.split(".")
+        elem.price.replace(' ₽', '').split(".")
     )
     const AllCategoriesPriceArr = allCategoryArr.map((elem) =>
         // @ts-ignore
@@ -85,3 +85,24 @@ export const getAmount = (data: PurchaseType[]) => {
         ).toLocaleString("ru-RU") + ".00 ₽"
     )
 }
+
+export const categories = {
+    credit: [
+        "Зарплата",
+        "Премия",
+        "Инвестиции",
+        "Переводы",
+        "Внесение наличных",
+        "Прочее"
+    ],
+    debit: [
+        "Еда", 
+        "Здоровье", 
+        "Жилье", 
+        "Транспорт", 
+        "Досуг", 
+        "Прочее"
+    ]
+}
+
+export type Type = 'credit' | 'debit';

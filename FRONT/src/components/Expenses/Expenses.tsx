@@ -16,7 +16,6 @@ const Expenses = () => {
     let [purchases, setPurchases] = useState<PurchaseType[]>([])
 
     const [filteredPurchase, setFilteredPurchase] = useState(purchases)
-    const options = ["Еда", "Здоровье", "Жилье", "Транспорт", "Досуг", "Прочее"]
 
     const indexDate = getMonth(new Date()) + 1
     const currentMonth = months[indexDate]
@@ -31,7 +30,7 @@ const Expenses = () => {
             TransactionService.getTransactions().then(trs => {
                 const purchases: PurchaseType[] = [];
                 trs.data.data.forEach((tr: any) => {
-                    if(tr.type !== 'debet') return;
+                    if(tr.type !== 'debit') return;
                     purchases.push({
                         id: tr.id,
                         type: tr.type,
@@ -68,11 +67,12 @@ const Expenses = () => {
         <div>
             {currentUser ? (
                 <><h1 className="title">Учет расходов</h1>
-                <Form func={setPurchases} data={purchases} options={options} />
+                <Form func={setPurchases} data={purchases} type="debit" />
                 <Statistics
                     title="Статистика расходов"
                     copyData={filteredPurchase}
-                    options={options} /><div className="flex flex-col py-10">
+                    type="debit"
+                 /><div className="flex flex-col py-10">
                         <Months
                             data={purchases}
                             func={setFilteredPurchase}

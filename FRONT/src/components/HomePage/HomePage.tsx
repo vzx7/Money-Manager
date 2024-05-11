@@ -15,9 +15,8 @@ const HomePage = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [isActive, setIsActive] = useState<boolean>(false)
     const [currentUser, setCurrentUser] = useState(undefined);
-
-    let copyIncome: PurchaseType[] = [];
-    let copyPurchases: PurchaseType[] = [];
+    const [copyIncome, setCopyIncome] = useState<PurchaseType[]>([]);
+    const [copyPurchases, setCopyPurchases] = useState<PurchaseType[]>([]);
 
     useEffect(() => {
 
@@ -26,6 +25,8 @@ const HomePage = () => {
         if (user) {
             setCurrentUser(user);
             TransactionService.getTransactions().then(trs => {
+                const incomes: PurchaseType[] = [];
+                const purchases: PurchaseType[] = [];
                 trs.data.data.forEach((tr: any) => {
                     const item = {
                         id: tr.id,
@@ -36,9 +37,11 @@ const HomePage = () => {
                         isChecked: false
                     };
 
-                    if (tr.type === 'debet') copyPurchases.push(item);
-                    if (tr.type === 'credit') copyIncome.push(item);
+                    if (tr.type === 'debit') purchases.push(item);
+                    if (tr.type === 'credit') incomes.push(item);
                 })
+                setCopyIncome(incomes);
+                setCopyPurchases(purchases);
             })
         }
 
@@ -65,6 +68,7 @@ const HomePage = () => {
         ".00 ₽"
 
     const handleClick = (event: FormEvent) => {
+        console.log(budget)
         event.preventDefault()
         localStorage.setItem("budget", JSON.stringify(budget))
         setIsActive(false)
